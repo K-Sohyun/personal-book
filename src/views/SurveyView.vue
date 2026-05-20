@@ -167,6 +167,7 @@ function goPrev() {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
+    color: var(--color-text);
   }
 
   &__subtitle {
@@ -212,6 +213,8 @@ function goPrev() {
     font-size: 1.125rem;
     line-height: 1.5;
     font-weight: 600;
+    color: var(--color-text);
+    -webkit-text-fill-color: var(--color-text);
   }
 
   &__choices {
@@ -232,6 +235,8 @@ function goPrev() {
     border: 1px solid color-mix(in srgb, var(--personal-color) 35%, transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--color-surface-elevated) 95%, transparent);
+    color: var(--color-text);
+    -webkit-text-fill-color: currentColor;
     text-align: left;
     @include touch-lift;
 
@@ -268,7 +273,8 @@ function goPrev() {
     &--next,
     &--submit {
       background: var(--color-accent);
-      color: #fff;
+      color: var(--color-on-primary);
+      -webkit-text-fill-color: currentColor;
     }
 
     &--prev {
