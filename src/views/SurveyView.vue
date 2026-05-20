@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { surveyQuestions } from '@/data/surveyQuestions'
 import { surveyMeta } from '@/data/surveyMeta'
-import { resetPersonalColor, useSurveyStore } from '@/composables/useSurveyStore'
+import { useSurveyStore } from '@/composables/useSurveyStore'
 
 const router = useRouter()
 const {
@@ -37,8 +37,6 @@ watch(
   },
   { immediate: true },
 )
-
-resetPersonalColor()
 
 function selectChoice(choiceId: string) {
   selectedChoiceId.value = choiceId

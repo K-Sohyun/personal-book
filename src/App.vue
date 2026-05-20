@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { resetPersonalColor } from '@/composables/useSurveyStore'
-
-const route = useRoute()
-
-watch(
-  () => route.name,
-  (name) => {
-    if (name === 'survey') {
-      resetPersonalColor()
-    }
-  },
-  { immediate: true },
-)
-</script>
-
 <template>
   <div class="app-shell">
     <div class="app-shell__spacer" aria-hidden="true" />

@@ -87,10 +87,5 @@ export function useSurveyStore() {
     getResultType,
     reset,
     isComplete,
-    loadAnswers,
   }
-}
-
-export function resetPersonalColor() {
-  document.documentElement.style.removeProperty('--personal-color')
 }

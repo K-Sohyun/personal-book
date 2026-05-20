@@ -63,10 +63,10 @@ npm run preview
 ```
 public/fonts/              Pretendard woff2 (로컬)
 src/
-├── App.vue                480px 셸, 설문 시 --personal-color 리셋
+├── App.vue                480px 셸 (세로 중앙 레이아웃)
 ├── main.ts                global.scss 로드
 ├── components/
-│   ├── BookCard.vue       순위 + 도서 정보 + 🔗 링크
+│   ├── BookCard.vue       순위 + 도서 정보 + 🔗 (1위: Click! 힌트)
 │   └── BookshelfLoader.vue  로딩 3D 북셸프
 ├── composables/
 │   └── useSurveyStore.ts  답변·점수·sessionStorage
@@ -120,7 +120,7 @@ src/
 - 4선택지 (블릿 없음), 선택 시 `--personal-color` 배경·테두리 살짝 강조, **선택 후에만** 다음/결과 보기 활성
 - 모든 단계: **이전 | 다음** (1단계 이전 disabled)
 - 5단계: **이전 | 결과 보기**
-- 미답 문항이 있으면 해당 단계부터 재개 (`loadAnswers` + `getInitialStep`)
+- 미답 문항이 있으면 해당 단계부터 재개 (`sessionStorage` 복원 + `getInitialStep`)
 - 문항 전환: `survey-slide` 트랜지션
 
 ---
@@ -140,7 +140,7 @@ src/
 - 진입 시 순차 페이드·슬라이드 업 (헤더 → 도서 목록 → CTA, 도서 카드 스태거)
 - `prefers-reduced-motion`: 애니메이션 off
 
-**상단 카드** (`result.color` → 로컬 CSS `--result-theme` 만 적용, 전역 `--personal-color` 는 변경하지 않음)
+**상단 카드** (`results.json` 의 `color` → 로컬 CSS `--result-theme` / `--result-theme-soft`)
 
 - pill 배지 (`badgeLabel`, 기본: 당신의 독서 성향)
 - 이모지 `icon` + `title`
@@ -148,7 +148,10 @@ src/
 
 **추천 도서**
 
-- `BookCard`: 왼쪽 순위(1위 강조), 제목·저자·소개, 오른쪽 🔗 → `book.url` (새 탭)
+- `BookCard`: 왼쪽 순위(1위 강조·초록 테두리), 제목·저자·소개, 오른쪽 🔗 → `book.url` (새 탭)
+  - **1위만** 링크 위 `Click!` 라벨(바운스 애니메이션, `prefers-reduced-motion` 시 정지)
+  - 카드 `overflow: hidden` 으로 모서리 보더 유지, 추천 목록 섹션은 `overflow: visible` 로 그림자·힌트 클리핑 방지
+  - PC `hover`: 링크 버튼만 살짝 떠오름(카드 전체 호버 없음)
 
 **하단 CTA**
 
@@ -167,8 +170,7 @@ src/
 | `--color-accent-strong` | `#1F976B` | 진한 초록 · 로딩 책 표지 |
 | `--color-red-soft` | `#F87E7E` | B타입 배지 등 |
 | `--color-red` | `#DF0000` | B타입 테마 · 바로가기 버튼 |
-| `--color-type-a` / `--color-type-c` | `#2b4167` / `#5a7d6a` | 결과 A·C 테마 |
-| `--personal-color` | `#d2e5ce` | 설문 선택·로딩 dot |
+| `--personal-color` | `#d2e5ce` | 설문 선택·로딩 dot·책 카드 보더 톤 |
 | `--color-on-primary` | `#ffffff` | 초록·빨강 버튼 글자 |
 | `--color-bg` | `#f5f8f4` | 페이지 배경 (단색) |
 | `--color-surface` | `rgba(255,255,255,0.72)` | glass 카드 |
@@ -262,6 +264,7 @@ results: {
 - 루트 `vercel.json`: SPA fallback → 모든 경로 `index.html`
 - Build: `npm run build`, Output Directory: `dist`
 - OG 이미지: **`public/og-image.png`** → `https://personal-book-yp.vercel.app/og-image.png`
+- 파비콘: **`public/favicon.svg`** (브랜드 그린 북 아이콘)
 - 프로덕션: https://personal-book-yp.vercel.app/
 - HTTPS 필수 (결과 공유 클립보드)
 

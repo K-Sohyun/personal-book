@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import resultsData from '@/data/results.json'
 import type { ResultsData } from '@/types'
-import { isResultTypeKey, type ResultTypeKey } from '@/types'
+import { isResultTypeKey } from '@/types'
 import BookCard from '@/components/BookCard.vue'
-import { resetPersonalColor, useSurveyStore } from '@/composables/useSurveyStore'
-
-const RESULT_THEME: Record<ResultTypeKey, string> = {
-  type_A: 'var(--color-type-a)',
-  type_B: 'var(--color-red)',
-  type_C: 'var(--color-type-c)',
-}
+import { useSurveyStore } from '@/composables/useSurveyStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,7 +26,7 @@ const badgeLabel = computed(
 const YP_BOOKS_HOME = 'https://www.ypbooks.co.kr/'
 
 const headerThemeStyle = computed(() => {
-  const theme = RESULT_THEME[resultKey.value]
+  const theme = resultType.value.color
   return {
     '--result-theme': theme,
     '--result-theme-soft':
@@ -57,18 +51,12 @@ function showToast(message: string) {
   }, 2600)
 }
 
-onMounted(() => {
-  resetPersonalColor()
-})
-
 onUnmounted(() => {
-  resetPersonalColor()
   if (toastTimer) clearTimeout(toastTimer)
 })
 
 function restart() {
   reset()
-  resetPersonalColor()
   router.push({ name: 'survey' })
 }
 
@@ -195,15 +183,22 @@ function goToYpBooks() {
   }
 
   &__books {
+    overflow: visible;
     animation-delay: 0.18s;
   }
 
-  &__actions {
-    animation-delay: 0.42s;
-    margin-bottom: 0;
+  &__book-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.125rem 0.125rem 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow: visible;
   }
 
   &__book-item {
+    overflow: visible;
     animation: result-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: calc(0.28s + var(--stagger, 0s));
   }
@@ -278,20 +273,14 @@ function goToYpBooks() {
     color: var(--color-text-muted);
   }
 
-  &__book-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
 
   &__actions {
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
     margin-top: 0.25rem;
+    margin-bottom: 0;
+    animation-delay: 0.42s;
   }
 
   &__cta-row {

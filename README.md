@@ -32,6 +32,8 @@ npm run dev
 ```
 docs/PROJECT_GUIDE.md
 public/fonts/       Pretendard woff2
+public/favicon.svg  앱 파비콘
+public/og-image.png OG·카카오 공유 썸네일
 src/
 ├── components/     BookCard, BookshelfLoader
 ├── composables/    useSurveyStore
