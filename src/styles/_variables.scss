@@ -1,0 +1,32 @@
+:root {
+  --color-accent: #4aaf70;
+  --color-accent-strong: #1f976b;
+  --color-red-soft: #f87e7e;
+  --color-red: #df0000;
+
+  --color-type-a: #2b4167;
+  --color-type-c: #5a7d6a;
+
+  --personal-color: #d2e5ce;
+  --color-bg: #f5f8f4;
+  --color-surface: rgba(255, 255, 255, 0.72);
+  --color-surface-elevated: rgba(255, 255, 255, 0.9);
+  --color-surface-opaque: rgba(255, 255, 255, 0.95);
+  --color-card-fill: rgba(255, 255, 255, 0.75);
+  --color-text: #1a1a1a;
+  --color-text-muted: #5c5c5c;
+  --color-text-subtle: #5a6b62;
+  --color-border-muted: #8a9a88;
+  --color-border-soft: #d0d8d2;
+  --color-on-primary: #ffffff;
+
+  --color-toast-bg: rgba(26, 26, 26, 0.92);
+  --color-toast-text: var(--color-on-primary);
+
+  --radius-md: 12px;
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --glass-blur: 12px;
+  --font-sans: Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
