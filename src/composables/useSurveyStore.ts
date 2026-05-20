@@ -50,8 +50,8 @@ export function useSurveyStore() {
     const entries = Object.entries(scores) as [ResultTypeKey, number][]
     if (entries.length === 0) return 'type_A'
 
-    /** 동점 시: 사색 > 공감 > 행동 (가장 ‘퍼스널’한 결과 우선) */
-    const tiePriority: ResultTypeKey[] = ['type_A', 'type_C', 'type_B']
+    /** 동점 시: 사색(A) > 지적 탐구(D) > 공감(C) > 스토리 탐험(B) */
+    const tiePriority: ResultTypeKey[] = ['type_A', 'type_D', 'type_C', 'type_B']
     entries.sort((a, b) => {
       if (b[1] !== a[1]) return b[1] - a[1]
       return tiePriority.indexOf(a[0]) - tiePriority.indexOf(b[0])

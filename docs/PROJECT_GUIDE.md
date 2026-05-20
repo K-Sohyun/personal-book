@@ -8,7 +8,7 @@
 | 항목 | 내용 |
 |------|------|
 | 이름 | 퍼스널 북 (Personal Book) |
-| 목적 | 5문항 심리 설문 → 독서 성향 3타입 → 영풍문고 추천 도서 3권 |
+| 목적 | 5문항 심리 설문 → 독서 성향 4타입 → 영풍문고 추천 도서 3권 |
 | 클라이언트 | 모바일 웹 (max-width 480px, 세로 중앙 레이아웃) |
 | 백엔드 | 없음 (정적 JSON + `sessionStorage`) |
 | 브랜드 | 영풍문고 (`https://www.ypbooks.co.kr/`) |
@@ -36,9 +36,9 @@ npm run preview
 /  → redirect /survey
 /survey  → 5문항 (선택 필수, CTA로만 이동)
 /loading → ~2.8초 후 결과 (sessionStorage에 결과 타입 필요)
-/result/:type? → 성향 카드 + 추천 도서 + CTA (URL 공유 가능)
+/result/:type? → 성향 카드 + 추천 도서 + CTA
 「다시하기」→ session 초기화 + /survey
-「결과 공유하기」→ 현재 결과 URL 클립보드 복사
+「결과 공유하기」→ 타입별 PNG를 클립보드에 복사 → 채팅 앱에 붙여넣기
 「영풍문고 바로가기」→ ypbooks.co.kr 새 탭
 ```
 
@@ -62,6 +62,9 @@ npm run preview
 
 ```
 public/fonts/              Pretendard woff2 (로컬)
+public/images/             결과 공유 PNG (타입별 4장)
+public/favicon.svg
+public/og-image.png        링크 미리보기용 (사이트 공통, 타입별 아님)
 src/
 ├── App.vue                480px 셸 (세로 중앙 레이아웃)
 ├── main.ts                global.scss 로드
@@ -73,7 +76,7 @@ src/
 ├── data/
 │   ├── surveyMeta.ts      설문 타이틀·부제
 │   ├── surveyQuestions.ts 5문항 × 4선택지
-│   └── results.json       3타입 결과·도서
+│   └── results.json       4타입 결과·도서
 ├── router/index.ts
 ├── styles/
 │   ├── _variables.scss    CSS 변수 (디자인 토큰)
@@ -81,6 +84,8 @@ src/
 │   ├── _mixins.scss       glass-panel, content-card, touch-lift
 │   └── global.scss
 ├── types/index.ts
+├── utils/
+│   └── resultShareImage.ts  공유 PNG 경로·fetch·클립보드 복사
 └── views/
     ├── SurveyView.vue
     ├── LoadingView.vue
@@ -92,26 +97,28 @@ src/
 
 ## 4. 설문 · 결과 산출
 
-### 3가지 독서 성향
+### 4가지 독서 성향
 
 | 키 | 이름 | 테마 색 (`results.json`) |
 |----|------|---------------------------|
 | `type_A` | 사색하는 독서가 | `#2b4167` (네이비) |
-| `type_B` | 열정적인 행동가 | `#DF0000` (브랜드 레드) |
+| `type_B` | 스토리 탐험가 | `#DF0000` (브랜드 레드) |
 | `type_C` | 따뜻한 공감가 | `#5a7d6a` (초록) |
+| `type_D` | 지적 탐구가 | `#6b5b95` (퍼플) |
 
 ### 점수 규칙 (`useSurveyStore.calculateResultType`)
 
 1. 각 문항 선택지의 `resultKey` 에 +1
 2. 최고 점수 타입이 결과
-3. **동점:** `type_A` → `type_C` → `type_B`
+3. 문항당 A·B·C·D 각 1보기 (풀 20개 = 타입당 5개)
+4. **동점:** `type_A`(사색) → `type_D`(탐구) → `type_C`(공감) → `type_B`(스토리 탐험)
 
 ### sessionStorage 키
 
 | 키 | 용도 |
 |----|------|
 | `personal-book-answers` | `{ questionId: choiceId }` JSON |
-| `personal-book-result-type` | `type_A` \| `type_B` \| `type_C` |
+| `personal-book-result-type` | `type_A` \| `type_B` \| `type_C` \| `type_D` |
 
 ### 설문 UI (`SurveyView`)
 
@@ -155,8 +162,26 @@ src/
 
 **하단 CTA**
 
-- 1행 (2열): **다시하기** · **결과 공유하기** — 공유 시 토스트 + `window.location.origin` + `/result/{type}` 클립보드 복사
+- 1행 (2열): **다시하기** · **결과 공유하기**
+  - `src/utils/resultShareImage.ts` → `public/images/result_{type_A|type_B|type_C|type_D}.png` 로드
+  - `navigator.clipboard.write` (ClipboardItem `image/png`) 로 **이미지 복사**
+  - 성공 토스트 (2줄, `white-space: pre-line`): `이미지가 복사되었습니다.` / `채팅방에 공유해 보세요.`
+  - 실패 시: PNG **다운로드** + `이미지 복사를 실패했습니다.` / `갤러리에서 보내 주세요.`
+  - **HTTPS**·사용자 제스처(버튼 클릭) 필요; PC 일부 브라우저는 다운로드 폴백만 동작할 수 있음
 - 2행: **영풍문고 바로가기** (풀 너비, `#DF0000` 단색) — `https://www.ypbooks.co.kr/` 새 탭
+
+### 결과 공유 이미지 (`public/images/`)
+
+| 파일 | 대응 타입 |
+|------|-----------|
+| `result_type_A.png` | 사색하는 독서가 |
+| `result_type_B.png` | 스토리 탐험가 |
+| `result_type_C.png` | 따뜻한 공감가 |
+| `result_type_D.png` | 지적 탐구가 |
+
+- 파일명·키(`type_A` 등)를 바꾸면 `resultShareImage.ts` 의 경로 규칙도 함께 맞출 것
+- 카피·디자인 변경 시 PNG만 교체 (앱 코드 수정 불필요)
+- **링크 붙여넣기 미리보기**는 `index.html` 의 `og-image.png` (공통) — 타입별 링크 썸네일은 미구현
 
 ---
 
@@ -209,7 +234,7 @@ src/
 ```ts
 // types/index.ts 와 동일 구조
 results: {
-  type_A | type_B | type_C: {
+  type_A | type_B | type_C | type_D: {
     title, icon?, badgeLabel?, color,
     description, quote?,
     books: [{ id, title, author, desc, url }]
@@ -234,15 +259,20 @@ results: {
 - 인용: 양귀자, 『모순』
 - 도서: 모순, 스토너, 데미안
 
-### type_B — 열정적인 행동가
+### type_B — 스토리 탐험가
 
 - 인용: 앤디 위어, 『프로젝트 헤일메리』
-- 도서: 프로젝트 헤일메리, 돌이킬 수 없는 약속, 물고기는 존재하지 않는다
+- 도서: 프로젝트 헤일메리, 돌이킬 수 없는 약속, 지구 끝의 온실
 
 ### type_C — 따뜻한 공감가
 
 - 인용: 김호연, 『불편한 편의점』
-- 도서: 불편한 편의점, 안녕이라 그랬어, 어서 오세요, 휴남동 서점입니다
+- 도서: 불편한 편의점, 메리골드 마음 세탁소, 어서 오세요, 휴남동 서점입니다
+
+### type_D — 지적 탐구가
+
+- 인용: 칼 세이건, 『코스모스』
+- 도서: 코스모스, 넥서스, 팩트풀니스
 
 상세 문구·URL은 `results.json` 이 단일 소스입니다.
 
@@ -266,7 +296,8 @@ results: {
 - OG 이미지: **`public/og-image.png`** → `https://personal-book-yp.vercel.app/og-image.png`
 - 파비콘: **`public/favicon.svg`** (브랜드 그린 북 아이콘)
 - 프로덕션: https://personal-book-yp.vercel.app/
-- HTTPS 필수 (결과 공유 클립보드)
+- HTTPS 필수 (`navigator.clipboard` 이미지 복사)
+- 결과 공유 PNG 4장은 빌드 시 `dist/images/` 로 복사됨 (`public/images/`)
 
 ---
 
@@ -277,6 +308,7 @@ results: {
 | 색·레이아웃·카피 | 해당 Vue SCSS, `_variables.scss`, **이 문서 §5–6** |
 | 설문 문항/매핑 | `surveyQuestions.ts`, **§4**, `useSurveyStore` |
 | 결과/도서 | `results.json`, `types/index.ts`, **§8** |
+| 공유 이미지·복사 UX | `public/images/`, `resultShareImage.ts`, `ResultView.vue`, **§5** |
 | 로딩 시간 | `LoadingView.vue` `LOADING_MS`, **§5**, README |
 | 라우트 추가/가드 | `router/index.ts`, **§2** |
 | 폰트 파일 | `public/fonts/`, `_fonts.scss`, **§6** |

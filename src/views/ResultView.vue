@@ -6,6 +6,10 @@ import type { ResultsData } from '@/types'
 import { isResultTypeKey } from '@/types'
 import BookCard from '@/components/BookCard.vue'
 import { useSurveyStore } from '@/composables/useSurveyStore'
+import {
+  copyResultShareImageToClipboard,
+  fetchResultShareImageFile,
+} from '@/utils/resultShareImage'
 
 const route = useRoute()
 const router = useRouter()
@@ -34,10 +38,7 @@ const headerThemeStyle = computed(() => {
   }
 })
 
-const shareUrl = computed(() => {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '')
-  return `${window.location.origin}${base}/result/${resultKey.value}`
-})
+const isSharing = ref(false)
 
 const toastMessage = ref('')
 let toastTimer: ReturnType<typeof setTimeout> | undefined
@@ -60,12 +61,31 @@ function restart() {
   router.push({ name: 'survey' })
 }
 
+function downloadShareImage(file: File) {
+  const url = URL.createObjectURL(file)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = file.name
+  anchor.click()
+  URL.revokeObjectURL(url)
+}
+
 async function shareResult() {
+  if (isSharing.value) return
+  isSharing.value = true
+
   try {
-    await navigator.clipboard.writeText(shareUrl.value)
-    showToast('링크가 복사되었습니다.')
+    await copyResultShareImageToClipboard(resultKey.value)
+    showToast('이미지가 복사되었습니다.\n채팅방에 공유해 보세요.')
   } catch {
-    showToast('링크 복사에 실패했습니다.')
+    try {
+      downloadShareImage(await fetchResultShareImageFile(resultKey.value))
+      showToast('이미지 복사를 실패했습니다.\n갤러리에서 보내 주세요.')
+    } catch {
+      showToast('공유에 실패했습니다.\n다시 시도해 주세요.')
+    }
+  } finally {
+    isSharing.value = false
   }
 }
 
@@ -122,9 +142,10 @@ function goToYpBooks() {
         <button
           type="button"
           class="result__btn result__btn--primary"
+          :disabled="isSharing"
           @click="shareResult"
         >
-          결과 공유하기
+          {{ isSharing ? '준비 중…' : '결과 공유하기' }}
         </button>
       </div>
       <button
@@ -273,7 +294,6 @@ function goToYpBooks() {
     color: var(--color-text-muted);
   }
 
-
   &__actions {
     display: flex;
     flex-direction: column;
@@ -333,6 +353,7 @@ function goToYpBooks() {
   font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.4;
+  white-space: pre-line;
   text-align: center;
   color: var(--color-toast-text);
   background: var(--color-toast-bg);

@@ -23,20 +23,22 @@ npm run dev
 
 | 경로 | 뷰 | 설명 |
 |------|-----|------|
-| `/survey` | `SurveyView.vue` | 5문항 심리 진단 |
+| `/survey` | `SurveyView.vue` | 5문항 심리 진단 (독서 성향 4타입) |
 | `/loading` | `LoadingView.vue` | 분석 로딩 (~2.8초 후 결과 이동) |
-| `/result/:type?` | `ResultView.vue` | 성향 결과 · 추천 도서 |
+| `/result/:type?` | `ResultView.vue` | 성향 결과 · 추천 도서 · 이미지 클립보드 공유 |
 
 ## 폴더 구조
 
 ```
 docs/PROJECT_GUIDE.md
 public/fonts/       Pretendard woff2
+public/images/      결과 공유 PNG 4장 (result_type_A~D.png)
 public/favicon.svg  앱 파비콘
-public/og-image.png OG·카카오 공유 썸네일
+public/og-image.png 사이트 링크 미리보기 (공통)
 src/
 ├── components/     BookCard, BookshelfLoader
 ├── composables/    useSurveyStore
+├── utils/          resultShareImage (클립보드 복사)
 ├── data/           surveyMeta, surveyQuestions, results.json
 ├── router/
 ├── styles/         variables, mixins, fonts, global
@@ -50,7 +52,8 @@ src/
 
 ## 콘텐츠
 
-설문·결과·추천 도서: `src/data/surveyQuestions.ts`, `src/data/results.json`
+설문·결과·추천 도서: `src/data/surveyQuestions.ts`, `src/data/results.json`  
+결과 공유 이미지: `public/images/result_type_{A|B|C|D}.png` — **결과 공유하기** 시 클립보드 복사 후 채팅 앱에 붙여넣기
 
 ## Vercel 배포
 

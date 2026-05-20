@@ -7,9 +7,14 @@ export interface Book {
   url: string
 }
 
-export type ResultTypeKey = 'type_A' | 'type_B' | 'type_C'
+export type ResultTypeKey = 'type_A' | 'type_B' | 'type_C' | 'type_D'
 
-export const RESULT_TYPE_KEYS: ResultTypeKey[] = ['type_A', 'type_B', 'type_C']
+export const RESULT_TYPE_KEYS: ResultTypeKey[] = [
+  'type_A',
+  'type_B',
+  'type_C',
+  'type_D',
+]
 
 export function isResultTypeKey(key: string): key is ResultTypeKey {
   return RESULT_TYPE_KEYS.includes(key as ResultTypeKey)
