@@ -55,6 +55,8 @@ src/
 1. GitHub 등에 푸시 후 [Vercel](https://vercel.com)에서 Import
 2. Framework Preset: **Vite**, Build: `npm run build`, Output: `dist`
 3. `vercel.json` 이 SPA 라우팅(`history` fallback)을 처리합니다.
-4. OG 공유 이미지: **`public/og-image.png`** (권장 1200×630px) 추가
+4. OG 공유 이미지: **`public/og-image.png`** (권장 1200×630px)
+
+**배포 URL:** https://personal-book-yp.vercel.app/
 
 배포 후 `npm run preview` 로 로컬에서 `dist` 를 한 번 확인하는 것을 권장합니다.

@@ -261,7 +261,8 @@ results: {
 
 - 루트 `vercel.json`: SPA fallback → 모든 경로 `index.html`
 - Build: `npm run build`, Output Directory: `dist`
-- OG 이미지: **`public/og-image.png`** (1200×630 권장) — `index.html` 메타와 동일 경로
+- OG 이미지: **`public/og-image.png`** → `https://personal-book-yp.vercel.app/og-image.png`
+- 프로덕션: https://personal-book-yp.vercel.app/
 - HTTPS 필수 (결과 공유 클립보드)
 
 ---
