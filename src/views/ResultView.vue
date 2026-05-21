@@ -80,7 +80,7 @@ async function shareResult() {
   } catch {
     try {
       downloadShareImage(await fetchResultShareImageFile(resultKey.value))
-      showToast('이미지 복사를 실패했습니다.\n갤러리에서 보내 주세요.')
+      showToast('이미지 복사에 실패해 기기에 저장되었습니다.')
     } catch {
       showToast('공유에 실패했습니다.\n다시 시도해 주세요.')
     }
